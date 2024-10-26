@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QDApps.Models;
+namespace QDApps.Models.WhereItAppModels;
 
 public partial class Item
 {
     public int ItemId { get; set; }
 
     public int? StashId { get; set; }
+    public string ItemName { get; set; } = null!;
 
     public DateTime? CreatedAt { get; set; }
 

@@ -20,34 +20,55 @@ namespace QDApps.Controllers
 
         public IActionResult Index()
         {
+
             if (User.Identities.First().IsAuthenticated)
             {
-                var aspNetUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                if (_modelHelper.IsUserNew(aspNetUserId))
+                int userId = GetCurrentUserId();
+                if (userId == 0)
                 {
-                    return RedirectToAction("SetupNewUser", new {aspNetUserId = aspNetUserId});
+                    return RedirectToAction("EditUser");
+                } 
+                else
+                {
+                    return RedirectToAction("Welcome");
                 };
 
             }
-
-
             return View();
         }
-        [HttpGet]
-        public IActionResult SetupNewUser(string aspNetUserId)
+
+        public IActionResult Welcome()
         {
-            EditUser newUser = new()
-            {
-                AspNetUserId = aspNetUserId,
-                TimeZoneId = 6,
-                TimeZones = _modelHelper.GetTimeZones()
-            };
-            return View(newUser);
+            int userId = GetCurrentUserId();
+
+            var userName = _modelHelper.GetUserName(userId);
+
+            return View("Welcome", userName);
         }
-        [HttpPost]
-        public IActionResult SetupNewUser(EditUser newUser)
+     
+        [HttpGet] public IActionResult EditUser()
         {
-            bool status = _modelHelper.CreateNewUser(newUser);
+            int userId = GetCurrentUserId();
+            User user = new User();
+
+            if (userId != 0) { user = _modelHelper.GetUser(userId); };
+
+            EditUser editUser = new()
+            {
+                TimeZones = _modelHelper.GetTimeZones(),
+                UserName = userId == 0 ? "UserName" : user.UserName,
+                TimeZoneId = userId == 0 ? 6 : user.TimeZoneId,
+                UserId = userId == 0 ? userId : -1,
+            };
+
+            return View(editUser);
+        }
+        [HttpPost] public IActionResult EditUser(EditUser editUser)
+        {
+            editUser.UserId = GetCurrentUserId();
+            editUser.AspNetUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            bool status = _modelHelper.EditUser(editUser);
 
             if (status)
             {
@@ -55,9 +76,8 @@ namespace QDApps.Controllers
             }
             else
             {
-                return RedirectToAction("Error", new { message = "Borked on creating your user details - whoop!" });
+                return RedirectToAction("Error", new { message = "Borked on editing your user details - whoop!" });
             }
-
         }
         public IActionResult Privacy()
         {
@@ -68,6 +88,17 @@ namespace QDApps.Controllers
         public IActionResult Error(string? message)
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier, Message = message });
+        }
+
+        public int GetCurrentUserId()
+        {
+            int userId = 0;
+            var aspNetUserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (aspNetUserId != null)
+            {
+                userId = _modelHelper.GetUserId(aspNetUserId);
+            }
+            return userId;
         }
     }
 }

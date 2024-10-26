@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "Welcome to WhereItApp!";
+}
+@model QDApps.Models.WhereItAppModels.ViewModels.EditWelcomeStash
+<form asp-action="Welcome">
+
+<div class=" my-4">
+
+    <div id="carousel" class="carousel carousel-dark slide">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="6" aria-label="Slide 7"></button>
+            <button type="button" data-bs-target="#carousel" data-bs-slide-to="7" aria-label="Slide 8"></button>
+                
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="10000">
+                <!-- <img src="..." class="d-block w-100" alt="..."> -->
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Welcome to WhereItApp</h5>
+                        <p>WhereItApp is an application to help you keep track of where you've put things. Maybe not all things, like socks and garlic, but things you don't see every day, like important documents, holiday decorations, or gifts!</p>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item" data-bs-interval="2000">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>You start with a Stash...</h5>
+                        <p>A <b>Stash</b> is a location you are putting things. It can be as specific or general as you like.</p>
+                        <p>Let's use some holiday gifts as an example...</p>
+                        <p>TO DO INSERT PICTURE OF SOCK DRAWER STASH</p>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Then you add Items...</h5>
+                        <p>An <b>Item</b> is anything you want to remember is in your stash.</p>
+                        <p>My mom will love this Minnesota Cowboy Hat and Leather Museum enamel pin for the holidays, but it's July and I want to remember where I put it...</p>
+                        <p>TO DO INSERT PICTURE OF ADDING ITEM TO DRAWER STASH</p>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Use Tags to keep track of common Items...</h5>
+                        <p>A <b>Tag</b> can help you keep a list of common items.</p>
+                        <p>I want to remember that I found the perfect card for her too, and it's in my top desk drawer...</p>
+                        <p>TO DO INSERT PICTURE OF ADDING TAG TO ITEM</p>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Mix and match!</h5>
+                        <p>Any <b>Item</b> can have multiple tags, like Holidays and Gifts for Mom</p>
+                        <p>You can have as many <b>Stashes</b> and <b>Items</b> as you like, but an <b>Item</b> can only ever be in one <b>Stash</b> at a time.</p>
+                        <p>TO DO INSERT PICTURE OF ADDING ITEM TO DRAWER STASH</p>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Try it out!</h5>
+                        <p>Start with your first stash:</p>
+                            <input asp-for="Stash" class="form-control" value="Gift Card" />
+                            <span asp-validation-for="Stash" class="text-danger"></span>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Try it out!</h5>
+                        <p>And place an item in it:</p>
+                        <input asp-for="Item" class="form-control" value="Sock Drawer"/>
+                        <span asp-validation-for="Item" class="text-danger"></span>
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+            <div class="carousel-item">
+                <!-- Instead of image, div with style and min-height --><div style="min-height: 220px;">
+                    <div class="carousel-caption d-block">
+                        <h5>Try it out!</h5>
+                        <p>And add a tag for what category it is:</p>
+                        <input asp-for="Tag" class="form-control" value="Arbor Day Gifts"/>
+                        <span asp-validation-for="Tag" class="text-danger"></span>
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </div><!-- end of div style min-height: 220px; -->
+            </div>
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+</div><!-- end .container -->
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

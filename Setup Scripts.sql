@@ -62,6 +62,7 @@ CREATE TABLE wia.Items(
 ,CONSTRAINT [PK_ItemId] PRIMARY KEY CLUSTERED (ItemId)
 ,StashId INT 
 ,CONSTRAINT [FK_Items_StashId] FOREIGN KEY (StashId) REFERENCES wia.Stashes(StashId)
+,ItemName NVARCHAR(200) NOT NULL
 ,CreatedAt DATETIME
 ,UpdatedAt DATETIME
 )

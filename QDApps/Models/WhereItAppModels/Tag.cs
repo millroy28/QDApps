@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QDApps.Models;
+namespace QDApps.Models.WhereItAppModels;
 
 public partial class Tag
 {

@@ -1,16 +1,22 @@
 ﻿
 @{
-    ViewData["Title"] = "Welcome!";
+    ViewData["Title"] = "Edit User!";
 }
 
 @model QDApps.Models.ViewModels.EditUser
 
-<h3>Well, looks like you're new here! Welcome</h3>
-<p>Let's take care of some setup items...</p>
+@if(Model.UserId == 0)
+{
+    <h3>Well, looks like you're new here! Welcome</h3>
+    <p>Let's take care of some setup items...</p>
+}
+else
+{
+    <h3>Edit your user details here....</h3>
+}
 
-    <form asp-action="SetupNewUser">
-        <input type="hidden" name="AspNetUserId" value=@Model.AspNetUserId />
 
+    <form asp-action="EditUser">
         <div class="form-group">
             <label asp-for="UserName" class="control-label">Your Preferred User Name:</label>
             <input asp-for="UserName" class="form-control" />

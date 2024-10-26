@@ -1,4 +1,6 @@
-﻿namespace QDApps.Models.ViewModels
+﻿using System.Diagnostics.Eventing.Reader;
+
+namespace QDApps.Models.ViewModels
 {
     public class EditUser : User
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using QDApps.Models;
+using QDApps.Models.WhereItAppModels;
 
 namespace QDApps.Context;
 
@@ -126,6 +127,7 @@ public partial class QdappsContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+            entity.Property(e => e.ItemName).HasMaxLength(200);
 
             entity.HasOne(d => d.Stash).WithMany(p => p.Items)
                 .HasForeignKey(d => d.StashId)
