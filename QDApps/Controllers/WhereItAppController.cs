@@ -21,16 +21,27 @@ namespace QDApps.Controllers
 
         public IActionResult Index()
         {
+            // New User Setup Check
             int userId = GetCurrentUserId();
             bool newUser = _modelHelper.IsUserNew(userId);
-            if (newUser) { return RedirectToAction("Welcome"); }
-            return View();
+            if (newUser) { return RedirectToAction("Welcome"); }; 
+
+            ViewInventory inventory = _modelHelper.GetInventory(userId);
+
+            return View(inventory);
         }
+
         [HttpGet]
         public IActionResult Welcome()
         {
+            // New User Setup Check
+            int userId = GetCurrentUserId();
+            bool newUser = _modelHelper.IsUserNew(userId);
+            if (!newUser) { return RedirectToAction("Index"); };
+
             return View();
         }
+
         [HttpPost]
         public IActionResult Welcome(EditWelcomeStash editWelcomeStash)
         {

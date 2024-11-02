@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using QDApps.Models;
 using QDApps.Models.WhereItAppModels;
+using QDApps.Models.WhereItAppModels.ViewModels;
 
 namespace QDApps.Context;
 
@@ -32,15 +33,18 @@ public partial class QdappsContext : DbContext
     public virtual DbSet<Item> Items { get; set; }
 
     public virtual DbSet<ItemTag> ItemTags { get; set; }
+    public virtual DbSet<ItemTagNames> ItemTagNames { get; set; }
 
     public virtual DbSet<Stash> Stashes { get; set; }
-
+    public virtual DbSet<StashTags> StashTags { get; set; }
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<QDApps.Models.TimeZone> TimeZones { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-
+    public virtual DbSet<ViewItems> ViewItems { get; set; }
+    public virtual DbSet<ViewStashes> ViewStashes { get; set; }
+    public virtual DbSet<ViewTags> ViewTags { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=QDApps;Trusted_Connection=True;encrypt=false;");
@@ -153,6 +157,16 @@ public partial class QdappsContext : DbContext
                 .HasConstraintName("FK_ItemTags_TagId");
         });
 
+
+        modelBuilder.Entity<ItemTagNames>(entity =>
+        {
+            entity.ToView("ItemTagNames", "wia");
+            entity.HasNoKey();
+
+
+        });
+        OnModelCreatingPartial(modelBuilder);
+
         modelBuilder.Entity<Stash>(entity =>
         {
             entity.HasKey(e => e.StashId).HasName("PK_StashId");
@@ -167,6 +181,14 @@ public partial class QdappsContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Stashes_UserId");
+        });
+
+        modelBuilder.Entity<StashTags>(entity =>
+        {
+            entity.ToView("StashTags", "wia");
+            entity.HasNoKey();
+           
+
         });
 
         modelBuilder.Entity<Tag>(entity =>
@@ -214,6 +236,29 @@ public partial class QdappsContext : DbContext
                 .HasConstraintName("FK_Users_TimeZoneId");
         });
 
+        modelBuilder.Entity<ViewItems>(entity =>
+        {
+            entity.ToView("ViewItems", "wia");
+            entity.HasNoKey();
+
+
+        });
+
+        modelBuilder.Entity<ViewStashes>(entity =>
+        {
+            entity.ToView("ViewStashes", "wia");
+            entity.HasNoKey();
+
+
+        });
+
+        modelBuilder.Entity<ViewTags>(entity =>
+        {
+            entity.ToView("ViewTags", "wia");
+            entity.HasNoKey();
+
+
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 

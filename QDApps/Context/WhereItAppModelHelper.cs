@@ -1,6 +1,7 @@
 ﻿using QDApps.Models.WhereItAppModels.ViewModels;
 using QDApps.Models.WhereItAppModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace QDApps.Context
 {
@@ -193,6 +194,63 @@ namespace QDApps.Context
                 return status;
             }
         }
+
+        public ViewInventory GetInventory(int userId)
+        {
+            ViewInventory inventory = new()
+            {
+                Stashes = GetStashes(userId),
+                Items = GetItems(userId),
+                Tags = GetTags(userId)
+            };            
+            return inventory;
+        }
+        public List<ViewStashes> GetStashes(int userId)
+        {
+            List<ViewStashes> stashes = _context.ViewStashes.Where(x => x.UserId == userId)
+                                                            .Select( x => new ViewStashes()
+                                                            {
+                                                                UserId = x.UserId,
+                                                                StashName = x.StashName,
+                                                                StashId = x.StashId,
+                                                                ItemCount = x.ItemCount
+                                                                
+                                                            }).ToList();
+
+            foreach (var stash in stashes)
+            {
+                stash.TagNames = _context.StashTags.Where(x => x.StashId == stash.StashId).Select(x => x.TagName).ToList();
+            }
+
+            return stashes;
+        }
+        public List<ViewItems> GetItems(int userId)
+        {
+            List<ViewItems> items = _context.ViewItems.Where(x => x.UserId == userId)
+                                                      .Select(x => new ViewItems()
+                                                      {
+                                                          UserId = x.UserId,
+                                                          ItemId = x.ItemId,
+                                                          ItemName = x.ItemName,
+                                                          StashId = x.StashId,
+                                                          StashName = x.StashName
+                                                      })
+                                                      .ToList();
+            foreach(var item in items)
+            {
+                item.TagNames = _context.ItemTagNames.Where(x => x.ItemId == item.ItemId)
+                                                     .Select(x => x.TagName).ToList();
+            }
+
+            return items;
+        }
+        public List<ViewTags> GetTags(int userId)
+        {
+            List<ViewTags> tags = _context.ViewTags.Where(x => x.UserId == userId).ToList();
+            return tags;
+        }
+
+
 
     }
 }
