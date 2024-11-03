@@ -201,7 +201,9 @@ namespace QDApps.Context
             {
                 Stashes = GetStashes(userId),
                 Items = GetItems(userId),
-                Tags = GetTags(userId)
+                Tags = GetTags(userId),
+                UserName = _context.Users.Single(x => x.UserId == userId).UserName
+
             };            
             return inventory;
         }
@@ -219,7 +221,11 @@ namespace QDApps.Context
 
             foreach (var stash in stashes)
             {
-                stash.TagNames = _context.StashTags.Where(x => x.StashId == stash.StashId).Select(x => x.TagName).ToList();
+                stash.Tags = _context.StashTags.Where(x => x.StashId == stash.StashId).Select(x => new Tag()
+                {
+                    TagId = x.TagId,
+                    TagName = x.TagName
+                }).ToList();
             }
 
             return stashes;
@@ -238,8 +244,12 @@ namespace QDApps.Context
                                                       .ToList();
             foreach(var item in items)
             {
-                item.TagNames = _context.ItemTagNames.Where(x => x.ItemId == item.ItemId)
-                                                     .Select(x => x.TagName).ToList();
+                item.Tags = _context.ItemTagNames.Where(x => x.ItemId == item.ItemId)
+                                                     .Select(x => new Tag()
+                                                     {
+                                                         TagId= x.TagId,
+                                                         TagName = x.TagName
+                                                     }).ToList();
             }
 
             return items;

@@ -4,7 +4,7 @@
 @model QDApps.Models.WhereItAppModels.ViewModels.ViewInventory
 
 <div>
-    <p>View By...</p>
+    <p>@Model.UserName's Stashes</p>
     <div>
         <button type="button" class="btn btn-primary" onclick="viewStashes()" id="viewStashesButton">Stashes</button>
         <button type="button" class="btn btn-primary" onclick="viewTags()" id="viewTagsButton">Tags</button>
@@ -22,9 +22,9 @@
             @foreach(var stash in Model.Stashes)
             {
                 <tr>
-                    <td>@stash.StashName</td>
+                    <td><a href="/WhereItApp/ViewStash?StashId=@stash.StashId">@stash.StashName</a>   </td>
                     <td>@stash.ItemCount</td>
-                    <td>@string.Join(" ", stash.TagNames.ToArray());</td>
+                    <td>@foreach (var tag in stash.Tags) { <a href="/WhereItApp/ViewTag?TagId=@tag.TagId" class="badge bg-secondary">@tag.TagName</a> }</td>
                 </tr>
             }
         </table>
@@ -38,7 +38,7 @@
             @foreach (var tag in Model.Tags)
             {
                 <tr>
-                    <td>@tag.TagName</td>
+                    <td><a href="/WhereItApp/ViewTag?TagId=@tag.TagId">@tag.TagName</a> </td>
                     <td>@tag.ItemCount</td>
                 </tr>
             }
@@ -54,9 +54,9 @@
             @foreach (var item in Model.Items)
             {
                 <tr>
-                    <td>@item.ItemName</td>
+                    <td><a href="/WhereItApp/ViewItem?ItemId=@item.ItemId">@item.ItemName</a></td>
                     <td>@item.StashName</td>
-                    <td>@string.Join(" ", item.TagNames.ToArray());</td>
+                    <td>@foreach (var tag in item.Tags) { <a href="/WhereItApp/ViewTag?TagId=@tag.TagId" class="badge bg-secondary">@tag.TagName</a> }</td> 
                 </tr>
             }
         </table>

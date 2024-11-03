@@ -7,7 +7,7 @@
         public string ItemName { get; set; } = null!;
         public int StashId { get; set; }
         public string StashName { get; set; } = null!;
-        public List<string> TagNames {get; set; } = [];
+        public List<Tag> Tags { get; set; } = [];
 
     }
 }
