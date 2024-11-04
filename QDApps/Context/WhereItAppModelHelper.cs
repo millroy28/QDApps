@@ -259,8 +259,102 @@ namespace QDApps.Context
             List<ViewTags> tags = _context.ViewTags.Where(x => x.UserId == userId).ToList();
             return tags;
         }
+        public ViewItem GetItem(int itemId, int userId)
+        {
+            Item item = _context.Items.Single(x => x.ItemId == itemId);
 
+            List<Tag> tags = _context.ItemTagNames.Where(x => x.ItemId == item.ItemId)
+                                                     .Select(x => new Tag()
+                                                     {
+                                                         TagId = x.TagId,
+                                                         TagName = x.TagName
+                                                     }).ToList();
+            List<Stash> availableStashes = _context.Stashes.Where(x => x.UserId == userId).ToList();
 
+            List<Tag> availableTags = _context.Tags.Where(x => x.UserId == userId
+                                                            && !tags.Select(y => y.TagId).Contains(x.TagId)).ToList();
 
+            ViewItem viewItem = new()
+            {
+                ItemId = item.ItemId,
+                StashId = item.StashId,
+                ItemName = item.ItemName,
+                CreatedAt = item.CreatedAt,
+                UpdatedAt = item.UpdatedAt,
+                Tags = tags,
+                AvailableStashes = availableStashes,
+                AvailableTags = availableTags
+            };
+
+            return viewItem;
+        }
+        public Status AddItemTag(int tagId, int itemId)
+        {
+            Status status = new();
+
+            //duplicate check
+            if(_context.ItemTags.Any(x => x.ItemId == itemId && x.TagId == tagId))
+            {
+                status.IsSuccess = true;
+                return status;
+            };
+
+            try
+            {
+                _context.ItemTags.Add(new ItemTag()
+                {
+                    ItemId = itemId,
+                    TagId = tagId
+                });
+                Item item = _context.Items.Single(x => x.ItemId == itemId);
+                item.UpdatedAt = DateTime.UtcNow;
+                _context.SaveChanges();
+                status.IsSuccess = true;
+
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Well dang it, failed to add tag to item...";
+            }
+
+            return status;
+        }
+        public Status RemoveItemTag(int tagId, int itemId)
+        {   
+            Status status = new();
+
+            if (_context.ItemTags.Any(x => x.ItemId == itemId && x.TagId == tagId))
+            {
+                try
+                {
+                    ItemTag itemTag = _context.ItemTags.Single(x => x.TagId == tagId && x.ItemId == itemId);
+                    _context.ItemTags.Remove(itemTag);
+                    Item item = _context.Items.Single(x => x.ItemId == itemId);
+                    item.UpdatedAt = DateTime.UtcNow;
+                    _context.SaveChanges();
+                    status.IsSuccess = true;
+                }
+                catch
+                {
+                    status.IsSuccess = false;
+                    status.StatusMessage = "For the record: failed to remove record of tag on item...";
+                }
+            }; 
+            return status;
+        }
+
+        public bool IsItemOwnedByUser(int userId, int itemId)
+        {
+            return _context.ViewItems.Any(x => x.ItemId == itemId && x.UserId == userId);
+        }
+        public bool IsTagOwnedByUser(int userId, int tagId)
+        {
+            return _context.Tags.Any(x => x.TagId == tagId && x.UserId == userId);
+        }
+        public bool IsStashOwnedByUser(int userId, int stashId)
+        {
+            return _context.Stashes.Any(x => x.StashId == stashId && x.UserId == userId);
+        }
     }
 }

@@ -116,7 +116,7 @@ AS
 	   ,t.TagName
 	
 	  FROM wia.Tags t
-
+	  
 	 INNER JOIN wia.ItemTags it
 	    ON it.TagId = t.TagId
 
@@ -126,7 +126,7 @@ AS
 	 INNER JOIN wia.Stashes s
 	    ON s.StashId = i.StashId
 		
-
+	 GROUP BY s.UserId, s.StashId, t.TagId, t.TagName
 
 GO;
 

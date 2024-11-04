@@ -55,10 +55,72 @@ namespace QDApps.Controllers
             else
             {
                 return RedirectToAction("Error", new { message = status});
+            }         
+        }
+        [HttpGet]
+        public IActionResult EditItem(int itemId)
+        {
+            int userId = GetCurrentUserId();
+            if (!_modelHelper.IsItemOwnedByUser(userId, itemId)){
+                return RedirectToAction("Index");
+            };
+
+            ViewItem item = _modelHelper.GetItem(itemId, userId);
+            
+            return View(item);
+        }
+        [HttpPost]
+        public IActionResult EditItem(ViewItem item)
+        {
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult AddTag(int tagId, int itemId)
+        {
+            int userId = GetCurrentUserId();
+            if (!_modelHelper.IsItemOwnedByUser(userId, itemId) || !_modelHelper.IsTagOwnedByUser(userId, tagId))
+            {
+                return RedirectToAction("Index");
             }
 
-         
+            Status status = _modelHelper.AddItemTag(tagId, itemId);
+
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("EditItem", new { itemId = itemId });
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
         }
+        public IActionResult RemoveTag(int tagId, int itemId)
+        {
+            int userId = GetCurrentUserId();
+            if (!_modelHelper.IsItemOwnedByUser(userId, itemId) || !_modelHelper.IsTagOwnedByUser(userId, tagId))
+            {
+                return RedirectToAction("Index");
+            }
+            Status status = _modelHelper.RemoveItemTag(tagId, itemId);
+
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("EditItem", new { itemId = itemId });
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+
+        }
+        [HttpPost]
+        public IActionResult DeleteItem(int itemId)
+        {
+            return RedirectToAction("Index");
+
+        }
+
         public int GetCurrentUserId()
         {
             int userId = 0;
