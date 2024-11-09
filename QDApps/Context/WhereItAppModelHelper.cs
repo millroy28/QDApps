@@ -2,6 +2,7 @@
 using QDApps.Models.WhereItAppModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace QDApps.Context
 {
@@ -254,12 +255,37 @@ namespace QDApps.Context
 
             return items;
         }
+        public List<ViewItems> GetItems(int userId, int stashId)
+        {
+            List<ViewItems> items = _context.ViewItems.Where(x => x.UserId == userId
+                                                               && x.StashId == stashId)
+                                                      .Select(x => new ViewItems()
+                                                      {
+                                                          UserId = x.UserId,
+                                                          ItemId = x.ItemId,
+                                                          ItemName = x.ItemName,
+                                                          StashId = x.StashId,
+                                                          StashName = x.StashName
+                                                      })
+                                                      .ToList();
+            foreach (var item in items)
+            {
+                item.Tags = _context.ItemTagNames.Where(x => x.ItemId == item.ItemId)
+                                                     .Select(x => new Tag()
+                                                     {
+                                                         TagId = x.TagId,
+                                                         TagName = x.TagName
+                                                     }).ToList();
+            }
+
+            return items;
+        }
         public List<ViewTags> GetTags(int userId)
         {
             List<ViewTags> tags = _context.ViewTags.Where(x => x.UserId == userId).ToList();
             return tags;
         }
-        public ViewItem GetItem(int itemId, int userId)
+        public ViewItem GetItem(int userId, int itemId)
         {
             Item item = _context.Items.Single(x => x.ItemId == itemId);
 
@@ -287,6 +313,42 @@ namespace QDApps.Context
             };
 
             return viewItem;
+        }
+        public ViewStash GetStash(int userId, int stashId)
+        {
+            Stash stash = _context.Stashes.Single(x => x.StashId == stashId
+                                                    && x.UserId == userId);
+
+            List<ViewItems> viewItems = GetItems(userId, stashId);
+
+            List<Stash> availableStashes = _context.Stashes.Where(x => x.UserId == userId
+                                                                    && x.StashId != stashId).ToList();
+
+            availableStashes.Add(new Stash()
+            {
+                StashId = -1,
+                StashName = ""
+            });
+            availableStashes.Add(new Stash()
+            {
+                StashId = 0,
+                StashName = "Delete Items"
+            });
+
+
+            ViewStash viewStash = new()
+            {
+                StashId = stash.StashId,
+                StashName = stash.StashName,
+                UserId = stash.UserId,
+                CreatedAt = stash.CreatedAt,
+                UpdatedAt = stash.UpdatedAt,
+                ViewItems = viewItems,
+                AvailableStashes = availableStashes.OrderBy(x => x.StashId).ToList()
+            };
+
+
+            return viewStash;
         }
         public Status AddItemTag(int tagId, int itemId)
         {
@@ -341,6 +403,108 @@ namespace QDApps.Context
                     status.StatusMessage = "For the record: failed to remove record of tag on item...";
                 }
             }; 
+            return status;
+        }
+        public Status EditItem(ViewItem item)
+        {
+            Status status = new();
+
+            Item editedItem = _context.Items.Single(x => x.ItemId == item.ItemId);
+            editedItem.ItemName = item.ItemName;
+            editedItem.StashId = item.StashId;
+            editedItem.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                _context.Items.Update(editedItem);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "The ball was dropped and we failed saving changes to your item";
+            }
+
+            return status;
+        }
+        public Status EditStash(int userId, ViewStash stash)
+        {
+            Status status = new();
+
+            // move/remove items
+            if (stash.DestinationStashId == 0)
+            {
+                List<Item> itemsToRemove = new();
+                foreach (var item in stash.ViewItems)
+                {
+                    if (item.Selected)
+                    {
+                        itemsToRemove.Add(_context.Items.Single(x=> x.ItemId == item.ItemId));
+                    }
+                }
+                try
+                {
+                    _context.Items.RemoveRange(itemsToRemove);
+                    _context.SaveChanges();
+                    status.IsSuccess = true;
+                }
+                catch
+                {
+                    status.IsSuccess = false;
+                    status.StatusMessage = "I've failed in so many things. Including, just now, removing these items from this stash. But also lots of other stuff, I assure you. Oh woe!";
+                    return status;
+                }
+            }
+
+            if (stash.DestinationStashId > 0)
+            {
+                List<Item> itemsToMove = new();
+                foreach (var item in stash.ViewItems)
+                {
+                    if (item.Selected)
+                    {
+                        itemsToMove.Add(_context.Items.Single(x => x.ItemId == item.ItemId));
+                    }
+                }
+                itemsToMove.ForEach(x => x.StashId = stash.DestinationStashId);
+                itemsToMove.ForEach(x => x.UpdatedAt = DateTime.UtcNow);
+
+
+                try
+                {
+                    _context.Items.UpdateRange(itemsToMove);
+                    _context.SaveChanges();
+                    status.IsSuccess = true;
+                }
+                catch
+                {
+                    status.IsSuccess = false;
+                    status.StatusMessage = "Dread and woe, dread and woe. I failed to move these items, you know!";
+                    return status;
+                }
+
+            }
+
+
+            Stash stashToEdit = _context.Stashes.Single(x => x.StashId == stash.StashId);
+            stashToEdit.UpdatedAt = DateTime.UtcNow;
+            stashToEdit.StashName = stash.StashName;
+
+            try
+            {
+                _context.Stashes.Update(stashToEdit);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Splish Splash, failed to update your stash!";
+                return status;
+            }
+
+
             return status;
         }
 

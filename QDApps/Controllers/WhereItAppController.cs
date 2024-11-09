@@ -65,15 +65,23 @@ namespace QDApps.Controllers
                 return RedirectToAction("Index");
             };
 
-            ViewItem item = _modelHelper.GetItem(itemId, userId);
+            ViewItem item = _modelHelper.GetItem(userId, itemId);
             
             return View(item);
         }
         [HttpPost]
         public IActionResult EditItem(ViewItem item)
         {
+            Status status = _modelHelper.EditItem(item);
 
-            return RedirectToAction("Index");
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("EditItem", new { itemId = item.ItemId});
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
         }
 
         public IActionResult AddTag(int tagId, int itemId)
@@ -113,6 +121,25 @@ namespace QDApps.Controllers
                 return RedirectToAction("Error", new { message = status });
             }
 
+        }
+        [HttpGet]
+        public IActionResult EditStash(int stashId)
+        {
+            int userId = GetCurrentUserId();
+            if(!_modelHelper.IsStashOwnedByUser(userId, stashId))
+            {
+                return RedirectToAction("Index");
+            }
+            ViewStash stash = _modelHelper.GetStash(userId, stashId);
+
+            return View(stash);
+        }
+        [HttpPost]
+        public IActionResult EditStash(ViewStash stash)
+        {
+            int userId= GetCurrentUserId();
+            Status status = _modelHelper.EditStash(userId, stash);
+            return RedirectToAction("EditStash", new { stashId = stash.StashId });
         }
         [HttpPost]
         public IActionResult DeleteItem(int itemId)

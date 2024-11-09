@@ -2,6 +2,7 @@
 {
     public class ViewItems
     {
+        public bool Selected { get; set; }
         public int UserId { get; set; }
         public int ItemId { get; set; } 
         public string ItemName { get; set; } = null!;

@@ -115,18 +115,25 @@ AS
 	   ,t.TagId
 	   ,t.TagName
 	
-	  FROM wia.Tags t
-	  
-	 INNER JOIN wia.ItemTags it
-	    ON it.TagId = t.TagId
+	  FROM wia.Stashes s
 
-	 INNER JOIN wia.Items i
-	    ON i.ItemId = it.TagId
+	 CROSS APPLY(
+		SELECT t.TagId
+		      ,t.TagName
 
-	 INNER JOIN wia.Stashes s
-	    ON s.StashId = i.StashId
-		
-	 GROUP BY s.UserId, s.StashId, t.TagId, t.TagName
+		  FROM wia.Items i
+
+		 INNER JOIN wia.ItemTags it
+		    ON it.ItemId = i.ItemId
+
+		 INNER JOIN wia.Tags t
+		    ON t.TagId = it.TagId
+
+		 WHERE i.StashId = s.StashID
+
+		 GROUP BY t.TagId, t.TagName
+		 ) t
+
 
 GO;
 

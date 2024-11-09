@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "WhereItApp: Stash";
+}
+@model QDApps.Models.WhereItAppModels.ViewModels.ViewStash
+@{int index = 0;}
+
+<form asp-action="EditStash">
+    <input asp-for="StashId" hidden />
+    <input asp-for="StashName" class="form-control"/>
+    
+    <table class="table table-bordered table-responsive table-hover">
+        <tr>
+            <tr><label asp-for="DestinationStashId" class="control-label">Move selected:</label></tr>
+            <tr>
+                <select asp-for="DestinationStashId" class="form-control" asp-items="@(new SelectList(Model.AvailableStashes, "StashId","StashName"))" ></select>
+            </tr>
+            <tr>
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </tr>
+        </tr>
+        <tr>
+            <th name="selected_col" id="Selected"><input type="checkbox" id="SelectAll" onclick="toggle_select_all_text_headers()" />Select all</th>
+            <th>Item</th>
+            <th>Tags</th>
+        </tr>
+        @foreach(var item in Model.ViewItems)
+        {
+            <tr>
+                <td><input asp-for="ViewItems[index].ItemId" hidden>
+                    <input type="checkbox" asp-for="ViewItems[index].Selected" class="form-check-input"/>
+                    </td>
+                <td>@item.ItemName</td>
+                <td>
+                    @foreach(var tag in item.Tags)
+                    {
+                        <div class="badge bg-secondary">@tag.TagName</div>                        
+                    }
+                </td>
+            </tr>
+            index++;
+        }
+    </table>
+
+
+</form>

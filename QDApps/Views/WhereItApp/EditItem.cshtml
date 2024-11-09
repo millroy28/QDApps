@@ -4,12 +4,14 @@
 @model QDApps.Models.WhereItAppModels.ViewModels.ViewItem
 
 <form asp-action="EditItem">
+    <input asp-for="ItemId" hidden />
     <input asp-for="ItemName" class="form-control"/>
     <div>@Model.CreatedAt</div>
     <div>@Model.UpdatedAt</div>
     <label asp-for="StashId" class="control-label">Stash:</label>
     <select asp-for="StashId" class="form-control" asp-items="@(new SelectList(Model.AvailableStashes, "StashId","StashName"))"></select>
     <input type="submit" value="Save" class="btn btn-primary" />
+    <a href="/WhereItApp/Index" class="btn btn-primary">Return</a>
 </form>
 <div>
     <p>Has Tags:</p>

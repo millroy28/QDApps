@@ -22,7 +22,7 @@
             @foreach(var stash in Model.Stashes)
             {
                 <tr>
-                    <td><a href="/WhereItApp/ViewStash?StashId=@stash.StashId">@stash.StashName</a>   </td>
+                    <td><a href="/WhereItApp/EditStash?StashId=@stash.StashId">@stash.StashName</a>   </td>
                     <td>@stash.ItemCount</td>
                     <td>@foreach (var tag in stash.Tags) { <a href="/WhereItApp/EditTag?TagId=@tag.TagId" class="badge bg-secondary">@tag.TagName</a> }</td>
                 </tr>
