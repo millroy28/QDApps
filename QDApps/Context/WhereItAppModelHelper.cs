@@ -326,12 +326,12 @@ namespace QDApps.Context
 
             availableStashes.Add(new Stash()
             {
-                StashId = -1,
-                StashName = ""
+                StashId = 0,
+                StashName = "Move/Delete Selected..."
             });
             availableStashes.Add(new Stash()
             {
-                StashId = 0,
+                StashId = -1,
                 StashName = "Delete Items"
             });
 
@@ -340,6 +340,7 @@ namespace QDApps.Context
             {
                 StashId = stash.StashId,
                 StashName = stash.StashName,
+                EditedStashName = stash.StashName,
                 UserId = stash.UserId,
                 CreatedAt = stash.CreatedAt,
                 UpdatedAt = stash.UpdatedAt,
@@ -432,8 +433,8 @@ namespace QDApps.Context
         {
             Status status = new();
 
-            // move/remove items
-            if (stash.DestinationStashId == 0)
+            // delete items
+            if (stash.DestinationStashId == -1)
             {
                 List<Item> itemsToRemove = new();
                 foreach (var item in stash.ViewItems)
@@ -443,9 +444,13 @@ namespace QDApps.Context
                         itemsToRemove.Add(_context.Items.Single(x=> x.ItemId == item.ItemId));
                     }
                 }
+
+                Stash stashToEdit = _context.Stashes.Single(x => x.StashId == stash.StashId);
+                stashToEdit.UpdatedAt = DateTime.UtcNow;
                 try
                 {
                     _context.Items.RemoveRange(itemsToRemove);
+                    _context.Stashes.Update(stashToEdit);
                     _context.SaveChanges();
                     status.IsSuccess = true;
                 }
@@ -456,7 +461,7 @@ namespace QDApps.Context
                     return status;
                 }
             }
-
+            // move items
             if (stash.DestinationStashId > 0)
             {
                 List<Item> itemsToMove = new();
@@ -470,10 +475,12 @@ namespace QDApps.Context
                 itemsToMove.ForEach(x => x.StashId = stash.DestinationStashId);
                 itemsToMove.ForEach(x => x.UpdatedAt = DateTime.UtcNow);
 
-
+                Stash stashToEdit = _context.Stashes.Single(x => x.StashId == stash.StashId);
+                stashToEdit.UpdatedAt = DateTime.UtcNow;
                 try
                 {
                     _context.Items.UpdateRange(itemsToMove);
+                    _context.Stashes.Update(stashToEdit);
                     _context.SaveChanges();
                     status.IsSuccess = true;
                 }
@@ -485,24 +492,27 @@ namespace QDApps.Context
                 }
 
             }
-
-
-            Stash stashToEdit = _context.Stashes.Single(x => x.StashId == stash.StashId);
-            stashToEdit.UpdatedAt = DateTime.UtcNow;
-            stashToEdit.StashName = stash.StashName;
-
-            try
+            // edit name
+            if(stash.EditedStashName != stash.StashName)
             {
-                _context.Stashes.Update(stashToEdit);
-                _context.SaveChanges();
-                status.IsSuccess = true;
+                Stash stashToEdit = _context.Stashes.Single(x => x.StashId == stash.StashId);
+                stashToEdit.UpdatedAt = DateTime.UtcNow;
+                stashToEdit.StashName = stash.EditedStashName;
+                try
+                {
+                    _context.Stashes.Update(stashToEdit);
+                    _context.SaveChanges();
+                    status.IsSuccess = true;
+                }
+                catch
+                {
+                    status.IsSuccess = false;
+                    status.StatusMessage = "Splish Splash, failed to update your stash!";
+                    return status;
+                }
+
             }
-            catch
-            {
-                status.IsSuccess = false;
-                status.StatusMessage = "Splish Splash, failed to update your stash!";
-                return status;
-            }
+
 
 
             return status;

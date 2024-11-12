@@ -11,6 +11,7 @@
         document.getElementById("viewTagsButton").disabled = true;
         document.getElementById("viewTags").hidden = false;
     }
+    return;
 }
 
 
@@ -40,3 +41,40 @@ function viewItems(){
     document.getElementById("viewTags").hidden = true;
     document.getElementById("viewItems").hidden = false;
 };
+
+function toggleSubmitButton_Stash() {
+    let currentStashId = document.getElementById("currentStashId").value;
+    let destinationStashId = document.getElementById("destinationStashId").value;
+    let currentStashName = document.getElementById("currentStashName").value;
+    let editedStashName = document.getElementById("editedStashName").value;
+    let inputs = document.getElementsByTagName("input");
+
+    let isAnythingChecked = false;
+
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].type == "checkbox" && inputs[i].checked == true) {
+            isAnythingChecked = true;
+        };
+    };
+    
+
+    if (((destinationStashId != 0) && isAnythingChecked)
+        || currentStashName != editedStashName) {
+        document.getElementById("submitButton").disabled = false;
+    } else {
+        document.getElementById("submitButton").disabled = true;
+    }
+    return;
+}
+
+function toggle_select_all_text_headers(selectAllId) {
+    let inputs = document.getElementsByTagName("input");
+    let selectAll = document.getElementById(selectAllId);
+
+    for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].type == "checkbox") {
+            inputs[i].checked = selectAll.checked;
+        };
+    };
+    return;
+}
