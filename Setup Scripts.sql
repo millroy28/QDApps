@@ -180,7 +180,9 @@ CREATE VIEW wia.ViewTags  AS
 CREATE VIEW wia.ItemTagNames AS
 
 SELECT i.ItemId
+	  ,i.ItemName
       ,s.UserId
+	  ,s.StashName
 	  ,t.TagId
 	  ,t.TagName
        
@@ -198,3 +200,4 @@ SELECT i.ItemId
 
 GO;
 
+select * from wia.ItemTagNames

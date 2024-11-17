@@ -67,6 +67,20 @@ function toggleSubmitButton_Stash() {
     return;
 }
 
+function toggleSubmitButton_Tag() {
+
+    let currentTagName = document.getElementById("currentTagName").value;
+    let editedTagName = document.getElementById("editedTagName").value;
+
+
+    if (currentTagName != editedTagName) {
+        document.getElementById("submitButton").disabled = false;
+    } else {
+        document.getElementById("submitButton").disabled = true;
+    }
+    return;
+}
+
 function toggle_select_all_text_headers(selectAllId) {
     let inputs = document.getElementsByTagName("input");
     let selectAll = document.getElementById(selectAllId);

@@ -139,8 +139,42 @@ namespace QDApps.Controllers
         {
             int userId= GetCurrentUserId();
             Status status = _modelHelper.EditStash(userId, stash);
-            return RedirectToAction("EditStash", new { stashId = stash.StashId });
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("EditStash", new { stashId = stash.StashId });
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
         }
+        [HttpGet]
+        public IActionResult EditTag(int tagId)
+        {
+            int userId = GetCurrentUserId();
+            if(!_modelHelper.IsTagOwnedByUser(userId, tagId))
+            {
+                return RedirectToAction("Index");
+            }
+            ViewTag tag = _modelHelper.GetTag(userId, tagId);
+            return View(tag);
+        }
+        [HttpPost]
+        public IActionResult EditTag(ViewTag tag)
+        {
+            int userId = GetCurrentUserId();
+            Status status = _modelHelper.EditTag(userId, tag);
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("EditTag", new { tagId = tag.TagId });
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+
+        }
+
         [HttpPost]
         public IActionResult DeleteItem(int itemId)
         {

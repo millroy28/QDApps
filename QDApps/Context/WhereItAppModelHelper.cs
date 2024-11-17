@@ -3,6 +3,8 @@ using QDApps.Models.WhereItAppModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+
 
 namespace QDApps.Context
 {
@@ -280,11 +282,7 @@ namespace QDApps.Context
 
             return items;
         }
-        public List<ViewTags> GetTags(int userId)
-        {
-            List<ViewTags> tags = _context.ViewTags.Where(x => x.UserId == userId).ToList();
-            return tags;
-        }
+
         public ViewItem GetItem(int userId, int itemId)
         {
             Item item = _context.Items.Single(x => x.ItemId == itemId);
@@ -313,6 +311,36 @@ namespace QDApps.Context
             };
 
             return viewItem;
+        }
+        public List<ViewTags> GetTags(int userId)
+        {
+            List<ViewTags> tags = _context.ViewTags.Where(x => x.UserId == userId).ToList();
+            return tags;
+        }
+        public ViewTag GetTag(int userId, int tagId)
+        {
+            Tag tag = _context.Tags.Single(x => x.UserId == userId
+                                             && x.TagId == tagId);
+            List<ViewItems> viewItems = _context.ItemTagNames.Where(x => x.TagId == tagId
+                                                                            && x.UserId == userId)
+                                                             .Select(x => new ViewItems()
+                                                             {
+                                                                 ItemId = x.ItemId,
+                                                                 ItemName = x.ItemName,
+                                                                 StashName = x.StashName
+                                                             })
+                                                             .ToList();
+            ViewTag viewTag = new()
+            {
+                TagId = tagId,
+                TagName = tag.TagName,
+                CreatedAt = tag.CreatedAt,
+                UpdatedAt = tag.UpdatedAt,
+                EditedTagName = tag.TagName,
+                UserId = userId,
+                ViewItems = viewItems
+            };
+            return viewTag;
         }
         public ViewStash GetStash(int userId, int stashId)
         {
@@ -515,6 +543,27 @@ namespace QDApps.Context
 
 
 
+            return status;
+        }
+        public Status EditTag(int userId, ViewTag tag)
+        {
+            Status status = new();
+            Tag editedTag = _context.Tags.Single(x => x.TagId == tag.TagId);
+            editedTag.UpdatedAt = DateTime.UtcNow;
+            editedTag.TagName = tag.EditedTagName;
+
+            try
+            {
+                _context.Tags.Update(editedTag);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Tag, that's it. Failed to edit tag.";
+                return status;
+            }
             return status;
         }
 

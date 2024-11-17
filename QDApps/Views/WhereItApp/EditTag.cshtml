@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "WhereItApp: Tags";
+}
+@model QDApps.Models.WhereItAppModels.ViewModels.ViewTag
+
+
+<form asp-action="EditTag">
+    <input asp-for="TagName" hidden id="currentTagName" />
+    <input asp-for="TagId" hidden />
+    <input asp-for="EditedTagName" id="editedTagName" class="form-control" />
+
+    <table class="table table-bordered table-responsive table-hover">
+        <tr>
+            <td>
+                <input type="submit" value="Save Changes" id="submitButton" class="btn btn-primary" />
+            </td>
+        </tr>
+        <tr>
+            <th>Item</th>
+            <th>Stash</th>
+        </tr>
+        @foreach(var item in Model.ViewItems)
+        {
+            <tr>
+                <td><a href="/WhereItApp/EditItem?ItemId=@item.ItemId">@item.ItemName</a></td>
+                <td>@item.StashName</td>
+            </tr>
+        }
+    </table>
+    
+
+</form>
+
+<script language="Javascript" src="~/js/WIA.js"></script>
+<script language="Javascript">
+    window.onload = toggleSubmitButton_Tag();</script>
+<script language="Javascript">
+    window.addEventListener("click", function (event) {
+        toggleSubmitButton_Tag();
+    });
+</script>
