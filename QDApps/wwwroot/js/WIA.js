@@ -81,6 +81,22 @@ function toggleSubmitButton_Tag() {
     return;
 }
 
+function toggleSubmitButton_Item() {
+
+    let currentItemName = document.getElementById("itemName").value;
+    let editedItemName = document.getElementById("editedItemName").value;
+    let currentStashId = document.getElementById("stashId").value;
+    let destinationStashId = document.getElementById("destinationStashId").value;
+
+    if (currentItemName != editedItemName
+        || currentStashId != destinationStashId) {
+        document.getElementById("submitButton").disabled = false;
+    } else {
+        document.getElementById("submitButton").disabled = true;
+    }
+    return;
+}
+
 function toggle_select_all_text_headers(selectAllId) {
     let inputs = document.getElementsByTagName("input");
     let selectAll = document.getElementById(selectAllId);

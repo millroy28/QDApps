@@ -13,20 +13,22 @@
     <table class="table table-bordered table-responsive table-hover">
         <tr>
             <td>
-            <select asp-for="DestinationStashId" id="destinationStashId" class="form-control" asp-items="@(new SelectList(Model.AvailableStashes, "StashId","StashName"))" ></select>
             </td>
             <td>
-                <input type="submit" value="Save Changes" id="submitButton" class="btn btn-primary" />
-
+                <select asp-for="DestinationStashId" id="destinationStashId" class="form-control" asp-items="@(new SelectList(Model.AvailableStashes, "StashId","StashName"))" ></select>
             </td>
             <td>
-                <a href="/WhereItApp/Index" class="btn btn-primary">Return</a>
+                <div style="display: flex; flex-flow: row; justify-content: space-between;">
+                    <input type="submit" value="Save Changes" id="submitButton" class="btn btn-primary" />
+                    <a href="/WhereItApp/Index" class="btn btn-primary">Return</a>
+                </div>
             </td>
         </tr>
         <tr>
             <th name="selected_col" id="Selected"><input type="checkbox" id="SelectAll" onclick="toggle_select_all_text_headers('SelectAll')" />Select all</th>
             <th>Item</th>
             <th>Tags</th>
+
         </tr>
         @foreach(var item in Model.ViewItems)
         {

@@ -5,29 +5,56 @@
 
 <form asp-action="EditItem">
     <input asp-for="ItemId" hidden />
-    <input asp-for="ItemName" class="form-control"/>
-    <div>@Model.CreatedAt</div>
-    <div>@Model.UpdatedAt</div>
-    <label asp-for="StashId" class="control-label">Stash:</label>
-    <select asp-for="StashId" class="form-control" asp-items="@(new SelectList(Model.AvailableStashes, "StashId","StashName"))"></select>
-    <input type="submit" value="Save" class="btn btn-primary" />
-    <a href="/WhereItApp/Index" class="btn btn-primary">Return</a>
+    <input asp-for="StashId" hidden id="stashId" />
+    <input asp-for="ItemName" hidden id="itemName" />
+    <table class="table table-bordered table-responsive">
+        <tr>
+            <td>
+                <input asp-for="EditedItemName" id="editedItemName" class="form-control"/>
+            </td>
+            <td>
+                <select asp-for="DestinationStashId" id="destinationStashId" class="form-control" asp-items="@(new SelectList(Model.AvailableStashes, "StashId","StashName"))"></select>
+            </td>
+        </tr>
+        <tr>
+
+            <td></td>
+            <td style="display: flex; flex-flow: row; justify-content: space-between;">
+                <input type="submit" value="Save Changes" id="submitButton" class="btn btn-primary" />
+                <a href="/WhereItApp/Index" class="btn btn-primary">Return</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Has Tags:
+            </td>
+            <td>
+                Add Tags:
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @foreach(var tag in Model.Tags)
+                {
+                        <p><a href="/WhereItApp/RemoveTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-danger">-</a> @tag.TagName </p>
+                }
+            </td>
+            <td>
+                @foreach (var tag in Model.AvailableTags)
+                {
+                        <p><a href="/WhereItApp/AddTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-success">+</a> @tag.TagName</p>
+                }
+            </td>
+        </tr>
+
+    </table>
+
 </form>
-<div>
-    <p>Has Tags:</p>
-    @foreach(var tag in Model.Tags)
-    {
-        <div>
-            <p>@tag.TagName <a href="/WhereItApp/RemoveTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-danger">Remove</a></p>
-        </div>
-    }
-</div>
-<div>
-    <p>Add Tags:</p>
-    @foreach (var tag in Model.AvailableTags)
-    {
-        <div>
-            <p>@tag.TagName <a href="/WhereItApp/AddTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-success">Add</a></p>
-        </div>
-    }
-</div>
+<script language="Javascript" src="~/js/WIA.js"></script>
+<script language="Javascript">
+    window.onload = toggleSubmitButton_Item();</script>
+<script language="Javascript">
+    window.addEventListener("click", function (event) {
+        toggleSubmitButton_Item();
+    });
+</script>

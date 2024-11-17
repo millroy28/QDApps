@@ -302,7 +302,9 @@ namespace QDApps.Context
             {
                 ItemId = item.ItemId,
                 StashId = item.StashId,
+                DestinationStashId = item.StashId,
                 ItemName = item.ItemName,
+                EditedItemName = item.ItemName,
                 CreatedAt = item.CreatedAt,
                 UpdatedAt = item.UpdatedAt,
                 Tags = tags,
@@ -439,8 +441,8 @@ namespace QDApps.Context
             Status status = new();
 
             Item editedItem = _context.Items.Single(x => x.ItemId == item.ItemId);
-            editedItem.ItemName = item.ItemName;
-            editedItem.StashId = item.StashId;
+            editedItem.ItemName = item.EditedItemName;
+            editedItem.StashId = item.DestinationStashId;
             editedItem.UpdatedAt = DateTime.UtcNow;
 
             try
