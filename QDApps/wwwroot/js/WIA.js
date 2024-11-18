@@ -22,6 +22,9 @@ function viewStashes(){
     document.getElementById("viewStashes").hidden = false;
     document.getElementById("viewTags").hidden = true;
     document.getElementById("viewItems").hidden = true;
+
+    //console.log("updating InventoryView in cookie to value Stashes");
+    document.cookie = "InventoryView=Stashes; path=/";
 };
 
 function viewTags(){
@@ -31,6 +34,10 @@ function viewTags(){
     document.getElementById("viewStashes").hidden = true;
     document.getElementById("viewTags").hidden = false;
     document.getElementById("viewItems").hidden = true;
+
+    //console.log("updating InventoryView in cookie to value Tags");
+    document.cookie = "InventoryView=Tags; path=/";
+    
 };
 
 function viewItems(){
@@ -40,7 +47,27 @@ function viewItems(){
     document.getElementById("viewStashes").hidden = true;
     document.getElementById("viewTags").hidden = true;
     document.getElementById("viewItems").hidden = false;
+
+    //console.log("updating InventoryView in cookie to value Items");
+    document.cookie = "InventoryView=Items; path=/";
 };
+
+function setViewOnLoad(view) {
+/*    console.log("Setting view to last known value: " + view);*/
+    switch (view) {
+
+        case "${Stashes}":
+            viewStashes();
+            break;
+        case "${Items}":
+            viewItems();
+            break;
+        case "${Tags}":
+            viewTags();
+            break;
+    }
+            return;
+}
 
 function toggleSubmitButton_Stash() {
     let currentStashId = document.getElementById("currentStashId").value;

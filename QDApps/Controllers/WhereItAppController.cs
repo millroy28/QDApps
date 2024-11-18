@@ -26,9 +26,25 @@ namespace QDApps.Controllers
             bool newUser = _modelHelper.IsUserNew(userId);
             if (newUser) { return RedirectToAction("Welcome"); }; 
 
+
             ViewInventory inventory = _modelHelper.GetInventory(userId);
+            if(!HttpContext.Request.Cookies.ContainsKey("InventoryView"))
+            {
+                return RedirectToAction("SetInventoryViewKey");
+
+            }
+
+             inventory.SelectedView = HttpContext.Request.Cookies["InventoryView"] ?? "";
+       
+            
+
 
             return View(inventory);
+        }
+        public IActionResult SetInventoryViewKey()
+        {
+            HttpContext.Response.Cookies.Append("InventoryView", "Stashes", new CookieOptions { Path = "/" });
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -191,6 +207,22 @@ namespace QDApps.Controllers
                 userId = _modelHelper.GetUserId(aspNetUserId);
             }
             return userId;
+        }
+        public void CreateUserPreferencesCookie(int userId)
+        {
+            //CookieOptions options = new CookieOptions()
+            //{
+            //    //Domain = "localhost:7188",
+            //    Expires = DateTime.UtcNow.AddDays(7),
+            //    Path = "/",
+            //    Secure = true,
+            //    SameSite = SameSiteMode.Strict,
+            //    HttpOnly = true,
+            //    IsEssential = true
+            //};
+
+            HttpContext.Response.Cookies.Append("UserId", userId.ToString());
+            HttpContext.Response.Cookies.Append("InventoryView", "Stashes");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

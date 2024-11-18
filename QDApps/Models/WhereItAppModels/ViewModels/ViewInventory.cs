@@ -6,6 +6,7 @@
         public List<ViewItems> Items { get; set; } = [];
         public List<ViewTags> Tags { get; set; } = [];
         public string UserName { get; set; } = string.Empty;
+        public string SelectedView { get; set; } = string.Empty;
 
     }
 }
