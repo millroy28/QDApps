@@ -3,14 +3,13 @@
 }
 @model QDApps.Models.WhereItAppModels.ViewModels.ViewItem
 
-<form asp-action="EditItem">
-    <input asp-for="ItemId" hidden />
-    <input asp-for="StashId" hidden id="stashId" />
+<form asp-action="CreateItem">
     <input asp-for="ItemName" hidden id="itemName" />
+    <input asp-for="StashId" hidden id="stashId" />
     <table class="table table-bordered table-responsive">
         <tr>
             <th>
-                <label asp-for="EditedItemName" class="control-label">Item:</label>
+                <label asp-for="EditedItemName" class="control-label">Item:</label> 
             </th>
             <th>
                 <label asp-for="DestinationStashId" class="control-label">Stash:</label>
@@ -32,29 +31,6 @@
                 <a href="/WhereItApp/Index" class="btn btn-primary">Return</a>
             </td>
         </tr>
-        <tr>
-            <td>
-                Has Tags:
-            </td>
-            <td>
-                Add Tags:
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @foreach(var tag in Model.Tags)
-                {
-                        <p><a href="/WhereItApp/RemoveTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-danger">-</a> @tag.TagName </p>
-                }
-            </td>
-            <td>
-                @foreach (var tag in Model.AvailableTags)
-                {
-                        <p><a href="/WhereItApp/AddTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-success">+</a> @tag.TagName</p>
-                }
-            </td>
-        </tr>
-
     </table>
 
 </form>

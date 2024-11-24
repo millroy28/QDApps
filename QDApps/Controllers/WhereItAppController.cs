@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using QDApps.Context;
 using QDApps.Models;
 using QDApps.Models.WhereItAppModels;
@@ -191,12 +192,35 @@ namespace QDApps.Controllers
 
         }
 
+        [HttpGet]
+        public IActionResult CreateItem()
+        {
+            int userId = GetCurrentUserId();
+            ViewItem viewItem = _modelHelper.GetBlankItem(userId);
+            return View(viewItem);
+        }
+        [HttpPost]
+        public IActionResult CreateItem(ViewItem viewItem)
+        {
+            Status status = _modelHelper.CreateItem(GetCurrentUserId(), viewItem);
+
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("EditItem", new { itemId = status.RecordId });
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+        }
+
         [HttpPost]
         public IActionResult DeleteItem(int itemId)
         {
             return RedirectToAction("Index");
 
         }
+        
 
         public int GetCurrentUserId()
         {
@@ -210,19 +234,8 @@ namespace QDApps.Controllers
         }
         public void CreateUserPreferencesCookie(int userId)
         {
-            //CookieOptions options = new CookieOptions()
-            //{
-            //    //Domain = "localhost:7188",
-            //    Expires = DateTime.UtcNow.AddDays(7),
-            //    Path = "/",
-            //    Secure = true,
-            //    SameSite = SameSiteMode.Strict,
-            //    HttpOnly = true,
-            //    IsEssential = true
-            //};
-
-            HttpContext.Response.Cookies.Append("UserId", userId.ToString());
             HttpContext.Response.Cookies.Append("InventoryView", "Stashes");
+            return;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -5,12 +5,40 @@
 
 <div>
     <p>@Model.UserName's Stashes</p>
-    <div>
-        <button type="button" class="btn btn-primary" onclick="viewStashes()" id="viewStashesButton">Stashes</button>
-        <button type="button" class="btn btn-primary" onclick="viewTags()" id="viewTagsButton">Tags</button>
-        <button type="button" class="btn btn-primary" onclick="viewItems()" id="viewItemsButton">Items</button>
 
-    </div>
+
+        <div class="btn-group">
+            <div style="padding: 2px; align-content: center;">
+                View:
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" onclick="viewStashes()" id="viewStashesButton">Stashes</button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" onclick="viewTags()" id="viewTagsButton">Tags</button>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary" onclick="viewItems()" id="viewItemsButton">Items</button>
+            </div>
+
+        </div>
+
+        <div class="btn-group">
+            <div style="padding: 2px; align-content: center;">
+                Add:
+            </div>
+            <div >
+                <a href="/WhereItApp/CreateStash" type="button" class="btn btn-success" id="viewStashesButton">+ Stash</a>
+            </div>
+            <div >
+                <a href="/WhereItApp/CreateTag" type="button" class="btn btn-success" id="viewTagsButton">+ Tag</a>
+            </div>
+            <div >
+                <a href="/WhereItApp/CreateItem" type="button" class="btn btn-success" id="viewItemsButton">+ Item</a>
+            </div>
+
+        </div>
+
 
     <div id="viewStashes" hidden>
         <table class="table table-bordered table-responsive table-hover">

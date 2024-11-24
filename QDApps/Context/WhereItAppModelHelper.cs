@@ -296,7 +296,8 @@ namespace QDApps.Context
             List<Stash> availableStashes = _context.Stashes.Where(x => x.UserId == userId).ToList();
 
             List<Tag> availableTags = _context.Tags.Where(x => x.UserId == userId
-                                                            && !tags.Select(y => y.TagId).Contains(x.TagId)).ToList();
+                                                            && !tags.Select(y => y.TagId).Contains(x.TagId))
+                                                   .ToList();
 
             ViewItem viewItem = new()
             {
@@ -313,6 +314,83 @@ namespace QDApps.Context
             };
 
             return viewItem;
+        }
+        public ViewItem GetBlankItem(int userId)
+        {
+            List<Stash> availableStashes = _context.Stashes.Where(x => x.UserId == userId).ToList();
+            availableStashes.Add(new Stash
+            {
+                StashId = 0,
+                StashName = "Select a stash:"
+            });
+            availableStashes = availableStashes.OrderBy(x => x.StashId).ToList();
+
+            ViewItem viewItem = new()
+            {
+                AvailableStashes = availableStashes,
+                ItemName = "",
+                EditedItemName = ""
+                
+            };
+
+            return viewItem;
+        }
+
+        public Status CreateItem(int userId, ViewItem viewItem)
+        {
+            Status status = new();
+
+            Item item = new()
+            {
+                ItemName = viewItem.EditedItemName,
+                StashId = viewItem.DestinationStashId,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
+
+            try
+            {
+                _context.Items.Add(item);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+                status.RecordId = item.ItemId;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Item was saved successfully... PSYCHE";
+            }
+
+            //if (viewItem.AvailableTags.Where(x => x.Selected == true).Any())
+            //{
+            //    List<ItemTag> itemTags = new();
+
+            //    foreach(var tag in viewItem.AvailableTags)
+            //    {
+            //        if (tag.Selected == true)
+            //        {
+            //            itemTags.Add(new ItemTag
+            //            {
+            //                ItemId = item.ItemId,
+            //                TagId = tag.TagId,
+            //                CreatedAt = DateTime.UtcNow
+            //            });
+            //        }
+            //    }
+            //    try
+            //    {
+            //        _context.ItemTags.AddRange(itemTags);
+            //        _context.SaveChanges();
+            //        status.IsSuccess = true;
+            //    }
+            //    catch
+            //    {
+            //        status.IsSuccess = false;
+            //        status.StatusMessage = "There was a time, when I was younger, where I thought I could add some selected tags to newly created items. But, it turns out, I was just fooling myself...";
+            //    }
+            //}
+
+            return status;
         }
         public List<ViewTags> GetTags(int userId)
         {

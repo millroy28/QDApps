@@ -115,8 +115,12 @@ function toggleSubmitButton_Item() {
     let currentStashId = document.getElementById("stashId").value;
     let destinationStashId = document.getElementById("destinationStashId").value;
 
-    if (currentItemName != editedItemName
-        || currentStashId != destinationStashId) {
+
+    if ((currentItemName != editedItemName
+        || currentStashId != destinationStashId)
+        && destinationStashId != 0
+        && editedItemName.replace(/\s/g, '').length > 0
+        ) {
         document.getElementById("submitButton").disabled = false;
     } else {
         document.getElementById("submitButton").disabled = true;
