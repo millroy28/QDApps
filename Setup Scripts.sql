@@ -89,11 +89,11 @@ AS
 	SELECT s.UserId
 		  ,s.StashId
 		  ,s.StashName
-		  ,ic.Items AS ItemCount
+		  ,ISNULL(ic.Items, 0) AS ItemCount
 
 	  FROM wia.Stashes s
 	
-	 CROSS APPLY (
+	 OUTER APPLY (
 		SELECT COUNT(i.ItemId) AS Items
 		      ,i.StashId
 
@@ -159,11 +159,11 @@ CREATE VIEW wia.ViewTags  AS
 	SELECT t.UserId
 	      ,t.TagId
 		  ,t.TagName
-		  ,tc.ItemCount
+		  ,ISNULL(tc.ItemCount, 0) AS ItemCount
 
 	  FROM wia.Tags t
 
-	 CROSS APPLY (
+	 OUTER APPLY (
 		SELECT COUNT(i.ItemId) AS ItemCount
 		  FROM wia.Items i
 
@@ -200,4 +200,3 @@ SELECT i.ItemId
 
 GO;
 
-select * from wia.ItemTagNames

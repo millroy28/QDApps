@@ -214,6 +214,49 @@ namespace QDApps.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult CreateStash()
+        {
+            int userId = GetCurrentUserId();
+            Stash stash = new Stash() { UserId = userId };
+            return View(stash);
+        }
+        [HttpPost]
+        public IActionResult CreateStash(Stash stash)
+        {
+            Status status = _modelHelper.CreateStash(stash);
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult CreateTag()
+        {
+            int userId = GetCurrentUserId();
+            Tag tag = new Tag() { UserId = userId };
+            return View(tag);
+        }
+        [HttpPost]
+        public IActionResult CreateTag(Tag tag)
+        {
+            Status status = _modelHelper.CreateTag(tag);
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+        }
+
+
         [HttpPost]
         public IActionResult DeleteItem(int itemId)
         {

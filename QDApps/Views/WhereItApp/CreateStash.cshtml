@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "WhereItApp: Stash";
+}
+@model QDApps.Models.WhereItAppModels.Stash
+
+
+<form asp-action="CreateStash">
+    <label asp-for="StashName" class="control-label">New Stash Name:</label>
+    <input asp-for="StashName" id="stashName" class="form-control" />
+    <input asp-for="UserId" hidden />
+    
+    <input type="submit" value="Save Changes" id="submitButton" class="btn btn-primary" />
+
+
+</form>
+
+<script language="Javascript" src="~/js/WIA.js"></script>
+<script language="Javascript">
+    window.onload = toggleSubmitButton_CreateStash();</script>
+<script language="Javascript">
+    window.addEventListener("click", function (event) {
+        toggleSubmitButton_CreateStash();
+    });
+</script>

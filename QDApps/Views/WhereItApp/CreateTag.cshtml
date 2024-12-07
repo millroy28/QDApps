@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "WhereItApp: Stash";
+}
+@model QDApps.Models.WhereItAppModels.Tag
+
+<form asp-action="CreateTag">
+    <label asp-for="TagName" class="control-label">New Tag Name:</label>
+    <input asp-for="TagName" id="tagName" class="form-control" />
+    <input asp-for="UserId" hidden />
+
+    <input type="submit" value="Save Changes" id="submitButton" class="btn btn-primary" />
+
+
+</form>
+
+<script language="Javascript" src="~/js/WIA.js"></script>
+<script language="Javascript">
+    window.onload = toggleSubmitButton_CreateTag();</script>
+<script language="Javascript">
+    window.addEventListener("click", function (event) {
+        toggleSubmitButton_CreateTag();
+    });
+</script>

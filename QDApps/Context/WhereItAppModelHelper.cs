@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.AspNetCore.Components;
 
 
 namespace QDApps.Context
@@ -121,10 +122,10 @@ namespace QDApps.Context
                 return status;
             }
         }
-        public Status CreateTag(int userId, string tag)
+        public Status CreateTag(Tag tag)
         {
             Status status = new();
-            if (!_context.Users.Any(x => x.UserId == userId))
+            if (!_context.Users.Any(x => x.UserId == tag.UserId))
             {
                 status.IsSuccess = false;
                 status.StatusMessage = "Create Tag failed - User with this id doesn't exist - whatteryoudoin?";
@@ -133,17 +134,13 @@ namespace QDApps.Context
 
             try
             {
-                Tag newTag = new()
-                {
-                    UserId = userId,
-                    TagName = tag,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                };
-                _context.Tags.Add(newTag);
+                tag.CreatedAt = DateTime.UtcNow;
+                tag.UpdatedAt = DateTime.UtcNow;                    
+                _context.Tags.Add(tag);
                 _context.SaveChanges();
 
-                status.RecordId = newTag.TagId;
+                status.IsSuccess = true;
+                status.RecordId = tag.TagId;
                 return status;
             }
             catch
@@ -646,7 +643,24 @@ namespace QDApps.Context
             }
             return status;
         }
-
+        public Status CreateStash(Stash stash)
+        {
+            Status status = new();
+            stash.CreatedAt = DateTime.UtcNow;
+            stash.UpdatedAt = DateTime.UtcNow;
+            try
+            {
+                _context.Stashes.Add(stash);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess= false;
+                status.StatusMessage = "NO NEW STASH FOR YOU - BACK OF THE LINE!";
+            }
+            return status;
+        }
         public bool IsItemOwnedByUser(int userId, int itemId)
         {
             return _context.ViewItems.Any(x => x.ItemId == itemId && x.UserId == userId);

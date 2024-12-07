@@ -94,6 +94,26 @@ function toggleSubmitButton_Stash() {
     return;
 }
 
+function toggleSubmitButton_CreateStash() {
+    let stashName = document.getElementById("stashName").value;
+    if (stashName.replace(/\s/g, '').length > 0) {
+        document.getElementById("submitButton").disabled = false;
+    } else {
+        document.getElementById("submitButton").disabled = true;
+    }
+    return;   
+}
+
+function toggleSubmitButton_CreateTag() {
+    let stashName = document.getElementById("tagName").value;
+    if (stashName.replace(/\s/g, '').length > 0) {
+        document.getElementById("submitButton").disabled = false;
+    } else {
+        document.getElementById("submitButton").disabled = true;
+    }
+    return;
+}
+
 function toggleSubmitButton_Tag() {
 
     let currentTagName = document.getElementById("currentTagName").value;
@@ -139,3 +159,4 @@ function toggle_select_all_text_headers(selectAllId) {
     };
     return;
 }
+
