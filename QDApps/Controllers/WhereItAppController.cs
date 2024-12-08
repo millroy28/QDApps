@@ -260,8 +260,62 @@ namespace QDApps.Controllers
         [HttpPost]
         public IActionResult DeleteItem(int itemId)
         {
-            return RedirectToAction("Index");
+            int userId = GetCurrentUserId();
+            if (!_modelHelper.IsItemOwnedByUser(userId, itemId))
+            {
+                return RedirectToAction("Index");
+            };
 
+            Status status = _modelHelper.DeleteItem(itemId);
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteTag(int tagId)
+        {
+            int userId = GetCurrentUserId();
+            if (!_modelHelper.IsTagOwnedByUser(userId, tagId))
+            {
+                return RedirectToAction("Index");
+            };
+
+            Status status = _modelHelper.DeleteTag(tagId);
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteStash(int stashId)
+        {
+            // Only if stash is empty
+            int userId = GetCurrentUserId();
+            if (!_modelHelper.IsTagOwnedByUser(userId, stashId) || !_modelHelper.IsStashEmpty(stashId))
+            {
+                return RedirectToAction("Index");
+            };
+
+            Status status = _modelHelper.DeleteStash(stashId);
+            if (status.IsSuccess)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error", new { message = status });
+            }
         }
         
 

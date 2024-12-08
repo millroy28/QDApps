@@ -389,6 +389,112 @@ namespace QDApps.Context
 
             return status;
         }
+        public Status DeleteItem(int itemId) 
+        {
+            Status status = new();
+
+            try
+            {
+                List<ItemTag> itemTags = _context.ItemTags.Where(x => x.ItemId == itemId).ToList();
+                _context.RemoveRange(itemTags);
+
+                Item item = _context.Items.Single(x => x.ItemId == itemId);
+                _context.Remove(item);
+                _context.SaveChanges();
+
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "I wish I may. I wish I might. I wish I hadn't failed to delete this item";
+            }
+
+            return status;
+        }
+        public Status DeleteTag(int tagId)
+        {
+            Status status = new();
+
+            try
+            {
+                List<ItemTag> itemTags = _context.ItemTags.Where(x => x.ItemId == itemId).ToList();
+                _context.RemoveRange(itemTags);
+
+                Tag tag = _context.Tags.Single(x => x.TagId == tagId);
+                _context.Remove(tag);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Tag. I'm it. As in I am why this tag couldn't be deleted and you are reading this error message";
+
+            }
+
+            return status;
+        }
+
+        public Status DeleteStash(int stashId)
+        {
+            Status status = new();
+
+            if (!IsStashEmpty(stashId))
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "I am not deleting this stash until it is emptied of all items";
+                return status;
+            }
+
+            try
+            {
+                Stash stash = _context.Stashes.Single(x => x.StashId == stashId);
+                _context.Remove(stash);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Could not delete the stash. But like, if you think about it, a place is just an idea, right? Like, an arbitrary demarcation of a seamless and infinite universe? So whose to say this stash, or like, place, is a thing that can even be deleted, let alone created, right?";
+            }
+
+            return status;
+        }
+
+        public Status ClearAndDeleteStash(int stashId)
+        {
+            Status status = new();
+
+            status = ClearStash(stashId);
+
+            if (status.IsSuccess)
+            {
+                status = DeleteStash(stashId);
+            }
+            return status;
+        }
+
+        public Status ClearStash(int stashId)
+        {
+            Status status = new();
+
+            try
+            {
+                List<Item> items = _context.Items.Where(x => x.StashId == stashId).ToList();
+                _context.Remove(items);
+                _context.SaveChanges();
+                status.IsSuccess = true;
+            }
+            catch
+            {
+                status.IsSuccess = false;
+                status.StatusMessage = "Some of the items in this stash did not want to be deleted, and I had to respect that";
+            }
+            return status;
+        }
+
         public List<ViewTags> GetTags(int userId)
         {
             List<ViewTags> tags = _context.ViewTags.Where(x => x.UserId == userId).ToList();
@@ -672,6 +778,10 @@ namespace QDApps.Context
         public bool IsStashOwnedByUser(int userId, int stashId)
         {
             return _context.Stashes.Any(x => x.StashId == stashId && x.UserId == userId);
+        }
+        public bool IsStashEmpty(int stashId)
+        {
+            return !_context.Items.Any(x => x.StashId == stashId);
         }
     }
 }
