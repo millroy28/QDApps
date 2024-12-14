@@ -225,7 +225,9 @@ namespace QDApps.Context
                 {
                     TagId = x.TagId,
                     TagName = x.TagName
-                }).ToList();
+                })
+                    .OrderBy(x => x.TagName)
+                    .ToList();
             }
 
             return stashes;
@@ -241,6 +243,7 @@ namespace QDApps.Context
                                                           StashId = x.StashId,
                                                           StashName = x.StashName
                                                       })
+                                                      .OrderBy(x => x.ItemName)
                                                       .ToList();
             foreach(var item in items)
             {
@@ -249,7 +252,9 @@ namespace QDApps.Context
                                                      {
                                                          TagId= x.TagId,
                                                          TagName = x.TagName
-                                                     }).ToList();
+                                                     })
+                                                     .OrderBy(x => x.TagName)
+                                                     .ToList();
             }
 
             return items;
@@ -266,6 +271,7 @@ namespace QDApps.Context
                                                           StashId = x.StashId,
                                                           StashName = x.StashName
                                                       })
+                                                      .OrderBy(x => x.ItemName)
                                                       .ToList();
             foreach (var item in items)
             {
@@ -274,12 +280,13 @@ namespace QDApps.Context
                                                      {
                                                          TagId = x.TagId,
                                                          TagName = x.TagName
-                                                     }).ToList();
+                                                     })
+                                                     .OrderBy(x => x.TagName)
+                                                     .ToList();
             }
 
             return items;
         }
-
         public ViewItem GetItem(int userId, int itemId)
         {
             Item item = _context.Items.Single(x => x.ItemId == itemId);
@@ -332,7 +339,6 @@ namespace QDApps.Context
 
             return viewItem;
         }
-
         public Status CreateItem(int userId, ViewItem viewItem)
         {
             Status status = new();
@@ -418,7 +424,7 @@ namespace QDApps.Context
 
             try
             {
-                List<ItemTag> itemTags = _context.ItemTags.Where(x => x.ItemId == itemId).ToList();
+                List<ItemTag> itemTags = _context.ItemTags.Where(x => x.TagId == tagId).ToList();
                 _context.RemoveRange(itemTags);
 
                 Tag tag = _context.Tags.Single(x => x.TagId == tagId);
@@ -482,10 +488,15 @@ namespace QDApps.Context
 
             try
             {
-                List<Item> items = _context.Items.Where(x => x.StashId == stashId).ToList();
-                _context.Remove(items);
-                _context.SaveChanges();
-                status.IsSuccess = true;
+                List<int> itemIds = _context.Items.Where(x => x.StashId == stashId).Select(x => x.ItemId).ToList();
+                foreach(int itemId in itemIds)
+                {
+                    status = DeleteItem(itemId);
+                    if(!status.IsSuccess)
+                    {
+                        return status;
+                    }
+                }
             }
             catch
             {
@@ -535,10 +546,11 @@ namespace QDApps.Context
             List<Stash> availableStashes = _context.Stashes.Where(x => x.UserId == userId
                                                                     && x.StashId != stashId).ToList();
 
+
             availableStashes.Add(new Stash()
             {
                 StashId = 0,
-                StashName = "Move/Delete Selected..."
+                StashName = "Move/Delete Selected Items..."
             });
             availableStashes.Add(new Stash()
             {
@@ -546,6 +558,17 @@ namespace QDApps.Context
                 StashName = "Delete Items"
             });
 
+            List<Tag> availableTags = _context.ViewTags.Where(x => x.UserId == userId)
+                                                       .Select(x => new Tag()
+                                                       {
+                                                           TagId = x.TagId,
+                                                           TagName = x.TagName
+                                                       }).ToList();
+            availableTags.Add(new Tag()
+            {
+                TagId = 0,
+                TagName = "Add Tag to Selected Items..."
+            });
 
             ViewStash viewStash = new()
             {
@@ -556,7 +579,8 @@ namespace QDApps.Context
                 CreatedAt = stash.CreatedAt,
                 UpdatedAt = stash.UpdatedAt,
                 ViewItems = viewItems,
-                AvailableStashes = availableStashes.OrderBy(x => x.StashId).ToList()
+                AvailableStashes = availableStashes.OrderBy(x => x.StashId).ToList(),
+                AvailableTags = availableTags.OrderBy(x => x.TagId).ToList()
             };
 
 
@@ -723,11 +747,27 @@ namespace QDApps.Context
                 }
 
             }
-
+            // add tags
+            if(stash.AddTagId != 0)
+            {
+                foreach (var item in stash.ViewItems)
+                {
+                    if (item.Selected && !DoesItemTagExist(stash.AddTagId, item.ItemId))
+                    {
+                        status = AddItemTag(stash.AddTagId, item.ItemId);
+                        if (!status.IsSuccess)
+                        {
+                            return status;
+                        }
+                    }
+                }
+            }
 
 
             return status;
         }
+
+        
         public Status EditTag(int userId, ViewTag tag)
         {
             Status status = new();
@@ -782,6 +822,12 @@ namespace QDApps.Context
         public bool IsStashEmpty(int stashId)
         {
             return !_context.Items.Any(x => x.StashId == stashId);
+        }
+
+        public bool DoesItemTagExist(int tagId, int itemId)
+        {
+            return _context.ItemTags.Any(x => x.ItemId == itemId
+                                           && x.TagId == tagId);
         }
     }
 }

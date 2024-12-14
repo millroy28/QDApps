@@ -193,10 +193,16 @@ namespace QDApps.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateItem()
+        public IActionResult CreateItem(int? stashId)
         {
             int userId = GetCurrentUserId();
             ViewItem viewItem = _modelHelper.GetBlankItem(userId);
+
+            if(stashId != null)
+            {
+                viewItem.DestinationStashId = stashId;
+                viewItem.StashId = stashId;
+            }
             return View(viewItem);
         }
         [HttpPost]
@@ -256,8 +262,6 @@ namespace QDApps.Controllers
             }
         }
 
-
-        [HttpPost]
         public IActionResult DeleteItem(int itemId)
         {
             int userId = GetCurrentUserId();
@@ -277,7 +281,7 @@ namespace QDApps.Controllers
             }
         }
 
-        [HttpPost]
+
         public IActionResult DeleteTag(int tagId)
         {
             int userId = GetCurrentUserId();
@@ -297,17 +301,16 @@ namespace QDApps.Controllers
             }
         }
 
-        [HttpPost]
         public IActionResult DeleteStash(int stashId)
         {
             // Only if stash is empty
             int userId = GetCurrentUserId();
-            if (!_modelHelper.IsTagOwnedByUser(userId, stashId) || !_modelHelper.IsStashEmpty(stashId))
+            if (!_modelHelper.IsStashOwnedByUser(userId, stashId)) 
             {
                 return RedirectToAction("Index");
             };
 
-            Status status = _modelHelper.DeleteStash(stashId);
+            Status status = _modelHelper.ClearAndDeleteStash(stashId);
             if (status.IsSuccess)
             {
                 return RedirectToAction("Index");

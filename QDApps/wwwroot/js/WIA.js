@@ -74,6 +74,7 @@ function toggleSubmitButton_Stash() {
     let destinationStashId = document.getElementById("destinationStashId").value;
     let currentStashName = document.getElementById("currentStashName").value;
     let editedStashName = document.getElementById("editedStashName").value;
+    let destinationTagId = document.getElementById("addTagId").value;
     let inputs = document.getElementsByTagName("input");
 
     let isAnythingChecked = false;
@@ -85,7 +86,7 @@ function toggleSubmitButton_Stash() {
     };
     
 
-    if (((destinationStashId != 0) && isAnythingChecked)
+    if (((destinationStashId != 0 || destinationTagId != 0) && isAnythingChecked)
         || currentStashName != editedStashName) {
         document.getElementById("submitButton").disabled = false;
     } else {
@@ -160,3 +161,18 @@ function toggle_select_all_text_headers(selectAllId) {
     return;
 }
 
+function toggle_modal(hide, elementId) {
+
+    if(hide == true){
+        document.getElementById(elementId).style.display = "none";
+    }
+
+    if (hide == false) {
+        document.getElementById(elementId).style.display = "flex";
+    }
+    //$('#myModal').on('shown.bs.modal', function () {
+    //    $('#myInput').trigger('focus')
+    //})
+
+    return;
+}
