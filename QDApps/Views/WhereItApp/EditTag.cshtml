@@ -7,9 +7,39 @@
 <form asp-action="EditTag">
     <input asp-for="TagName" hidden id="currentTagName" />
     <input asp-for="TagId" hidden />
+    <input asp-for="TagDescription" hidden id="currentTagDescription" />
+    <input asp-for="TagColor" hidden id="currentTagColor" />
+
     <input asp-for="EditedTagName" id="editedTagName" class="form-control" />
+    <label asp-for="EditedTagDescription" class="control-label">Description:</label>
+    <input asp-for="EditedTagDescription" id="editedTagDescription" class="form-control" />
+
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+    @foreach (var tagColor in Model.AvailableTagColors)
+    {
+        string color = $"bg-{tagColor.Key}";
+
+        <div style="display: flex; flex-direction: row; padding: 2px;">
+            @if(tagColor.Key == Model.TagColor)
+            {
+                    <input type="radio" asp-for="EditedTagColor" value="@tagColor.Key" checked="true" name="EditedTagColor" />
+                <div class="badge @color">@tagColor.Value</div>
+            }
+            else
+            {
+                    <input type="radio" asp-for="EditedTagColor" value="@tagColor.Key" name="EditedTagColor" />
+                <div class="badge @color">@tagColor.Value</div>
+            }
+        </div>
+    }
+    </div>
 
     <table class="table table-bordered table-responsive table-hover">
+        <tr>
+            <td>
+            </td>
+        </tr>
         <tr>
             <td></td>
             <td>

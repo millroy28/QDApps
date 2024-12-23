@@ -20,3 +20,43 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.bg-pink {
+    --bs-bg-opacity: 1;
+    background-color: deeppink !important;
+}
+
+.bg-violet {
+    --bs-bg-opacity: 1;
+    background-color: blueviolet !important;
+}
+
+.bg-brown {
+    --bs-bg-opacity: 1;
+    background-color: brown !important;
+}
+
+.bg-chartreuse {
+    --bs-bg-opacity: 1;
+    background-color: chartreuse !important;
+}
+
+.bg-coral {
+    --bs-bg-opacity: 1;
+    background-color: coral !important;
+}
+
+.bg-teal {
+    --bs-bg-opacity: 1;
+    background-color: teal !important;
+}
+
+.bg-navy {
+    --bs-bg-opacity: 1;
+    background-color: navy !important;
+}
+
+.bg-orange {
+    --bs-bg-opacity: 1;
+    background-color: darkorange !important;
+}

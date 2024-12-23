@@ -199,6 +199,8 @@ public partial class QdappsContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.TagName).HasMaxLength(200);
+            entity.Property(e => e.TagColor).HasMaxLength(10);
+            entity.Property(e => e.TagDescription).HasMaxLength(2000);
             entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
 
             entity.HasOne(d => d.User).WithMany(p => p.Tags)

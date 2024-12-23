@@ -55,6 +55,8 @@ CREATE TABLE wia.Tags(
 ,UserId INT NOT NULL
 ,CONSTRAINT [FK_Tags_UserId] FOREIGN KEY (UserId) REFERENCES Users(UserId)
 ,TagName NVARCHAR(200) NOT NULL
+,TagColor VARCHAR(20)
+,TagDescription NVARCHAR(2000)
 ,CreatedAt DATETIME
 ,UpdatedAt DATETIME
 
@@ -114,12 +116,14 @@ AS
 	   ,s.StashId
 	   ,t.TagId
 	   ,t.TagName
+	   ,t.TagColor
 	
 	  FROM wia.Stashes s
 
 	 CROSS APPLY(
 		SELECT t.TagId
 		      ,t.TagName
+			  ,t.TagColor
 
 		  FROM wia.Items i
 
@@ -131,7 +135,7 @@ AS
 
 		 WHERE i.StashId = s.StashID
 
-		 GROUP BY t.TagId, t.TagName
+		 GROUP BY t.TagId, t.TagName, t.TagColor
 		 ) t
 
 
@@ -152,13 +156,14 @@ CREATE VIEW wia.ViewItems AS
 
 
 
-
+		
 GO;
 
 CREATE VIEW wia.ViewTags  AS
 	SELECT t.UserId
 	      ,t.TagId
 		  ,t.TagName
+		  ,t.TagColor
 		  ,ISNULL(tc.ItemCount, 0) AS ItemCount
 
 	  FROM wia.Tags t
@@ -185,6 +190,8 @@ SELECT i.ItemId
 	  ,s.StashName
 	  ,t.TagId
 	  ,t.TagName
+	  ,t.TagColor
+	  ,t.TagDescription
        
 
   FROM wia.Items i

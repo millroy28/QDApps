@@ -53,13 +53,20 @@
             <td>
                 @foreach(var tag in Model.Tags)
                 {
-                        <p><a href="/WhereItApp/RemoveTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-danger">-</a> @tag.TagName </p>
+                    string tagColor = tag.TagColor == null ? "bg-secondary" : $"bg-{tag.TagColor}";
+                    <div>
+                        <div class="badge @tagColor">@tag.TagName</div>
+                        <a href="/WhereItApp/RemoveTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-danger">X</a>
+                    </div>
+                 
                 }
             </td>
             <td>
                 @foreach (var tag in Model.AvailableTags)
                 {
-                        <p><a href="/WhereItApp/AddTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge bg-success">+</a> @tag.TagName</p>
+                    string tagColor = tag.TagColor == null ? "bg-secondary" : $"bg-{tag.TagColor}";
+
+                    <a href="/WhereItApp/AddTag?tagId=@tag.TagId&itemId=@Model.ItemId" class="badge @tagColor">@tag.TagName</a>
                 }
             </td>
         </tr>

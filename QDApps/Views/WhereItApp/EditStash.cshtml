@@ -59,8 +59,9 @@
                 <td>
                     @foreach(var tag in item.Tags)
                     {
+                        string tagColor = tag.TagColor == null ? "bg-secondary" : $"bg-{tag.TagColor}";
                         string onclickParam = $"false, 'tagModal_{item.ItemId}.{tag.TagId}'";
-                        <div class="badge bg-secondary" onclick="toggle_modal(@onclickParam)">@tag.TagName</div>
+                        <div class="badge @tagColor" onclick="toggle_modal(@onclickParam)">@tag.TagName</div>
                     }
                 </td>
             </tr>

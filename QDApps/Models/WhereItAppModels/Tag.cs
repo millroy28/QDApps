@@ -10,6 +10,8 @@ public partial class Tag
     public int UserId { get; set; }
 
     public string TagName { get; set; } = null!;
+    public string? TagColor { get; set; }
+    public string? TagDescription { get; set; }
 
     public DateTime? CreatedAt { get; set; }
 

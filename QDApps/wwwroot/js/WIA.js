@@ -119,9 +119,23 @@ function toggleSubmitButton_Tag() {
 
     let currentTagName = document.getElementById("currentTagName").value;
     let editedTagName = document.getElementById("editedTagName").value;
+    let currentTagDescription = document.getElementById("currentTagDescription").value;
+    let editedTagDescription = document.getElementById("editedTagDescription").value;
+    let currentTagColor = document.getElementById("currentTagColor").value;
+    let selectedTagColor = "";
+
+    let availableTagColors = document.getElementsByName("EditedTagColor");
+    for (let i = 0; i < availableTagColors.length; i++) {
+        if (availableTagColors[i].checked == true) {
+            selectedTagColor = availableTagColors[i].value;
+        }
+    }
+    let selectedTagCo = document.getElementById("EditedTagColor").value;
 
 
-    if (currentTagName != editedTagName) {
+    if (currentTagName != editedTagName
+        || currentTagDescription != editedTagDescription
+        || selectedTagColor != currentTagColor) {
         document.getElementById("submitButton").disabled = false;
     } else {
         document.getElementById("submitButton").disabled = true;

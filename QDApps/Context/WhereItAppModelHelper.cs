@@ -224,7 +224,8 @@ namespace QDApps.Context
                 stash.Tags = _context.StashTags.Where(x => x.StashId == stash.StashId).Select(x => new Tag()
                 {
                     TagId = x.TagId,
-                    TagName = x.TagName
+                    TagName = x.TagName,
+                    TagColor = x.TagColor
                 })
                     .OrderBy(x => x.TagName)
                     .ToList();
@@ -250,8 +251,9 @@ namespace QDApps.Context
                 item.Tags = _context.ItemTagNames.Where(x => x.ItemId == item.ItemId)
                                                      .Select(x => new Tag()
                                                      {
-                                                         TagId= x.TagId,
-                                                         TagName = x.TagName
+                                                         TagId = x.TagId,
+                                                         TagName = x.TagName,
+                                                         TagColor = x.TagColor
                                                      })
                                                      .OrderBy(x => x.TagName)
                                                      .ToList();
@@ -279,7 +281,8 @@ namespace QDApps.Context
                                                      .Select(x => new Tag()
                                                      {
                                                          TagId = x.TagId,
-                                                         TagName = x.TagName
+                                                         TagName = x.TagName,
+                                                         TagColor = x.TagColor
                                                      })
                                                      .OrderBy(x => x.TagName)
                                                      .ToList();
@@ -295,7 +298,9 @@ namespace QDApps.Context
                                                      .Select(x => new Tag()
                                                      {
                                                          TagId = x.TagId,
-                                                         TagName = x.TagName
+                                                         TagName = x.TagName,
+                                                         TagColor = x.TagColor,
+                                                         TagDescription = x.TagDescription
                                                      }).ToList();
             List<Stash> availableStashes = _context.Stashes.Where(x => x.UserId == userId).ToList();
 
@@ -524,6 +529,8 @@ namespace QDApps.Context
                                                                  StashName = x.StashName
                                                              })
                                                              .ToList();
+
+
             ViewTag viewTag = new()
             {
                 TagId = tagId,
@@ -531,8 +538,12 @@ namespace QDApps.Context
                 CreatedAt = tag.CreatedAt,
                 UpdatedAt = tag.UpdatedAt,
                 EditedTagName = tag.TagName,
+                TagDescription = tag.TagDescription,
+                EditedTagDescription = tag.TagDescription,
+                TagColor = tag.TagColor == null ? "secondary" : tag.TagColor,
                 UserId = userId,
-                ViewItems = viewItems
+                ViewItems = viewItems,
+                AvailableTagColors = GetAvailableTagColors()
             };
             return viewTag;
         }
@@ -774,6 +785,8 @@ namespace QDApps.Context
             Tag editedTag = _context.Tags.Single(x => x.TagId == tag.TagId);
             editedTag.UpdatedAt = DateTime.UtcNow;
             editedTag.TagName = tag.EditedTagName;
+            editedTag.TagDescription = tag.EditedTagDescription;
+            editedTag.TagColor = tag.EditedTagColor;
 
             try
             {
@@ -806,6 +819,31 @@ namespace QDApps.Context
                 status.StatusMessage = "NO NEW STASH FOR YOU - BACK OF THE LINE!";
             }
             return status;
+        }
+
+        public Dictionary<string, string> GetAvailableTagColors()
+        {
+            Dictionary<string, string> colors = new();
+            // Hard coding this because this is QD. 
+            // In the future, make a database table, enum, etc, and do this right
+            // but for now, sloppy joe that ish
+
+            colors.Add("secondary","Oh Hey Grey");
+            colors.Add("dark", "Bleck");
+            colors.Add("primary", "MS Blue");
+            colors.Add("success","Excel Green");
+            colors.Add("danger", "Danger Red");
+            colors.Add("warning", "Bellow Yellow");
+            colors.Add("info", "Trapper Keeper Teal");
+            colors.Add("pink", "Pank");
+            colors.Add("violet", "Violet");
+            colors.Add("brown", "Brown-town");
+            colors.Add("chartreuse", "Chartruse");
+            colors.Add("coral", "Coral");
+            colors.Add("teal", "Ally Mc Teal");
+            colors.Add("navy", "Navy");
+            colors.Add("orange", "Orange");
+            return colors;
         }
         public bool IsItemOwnedByUser(int userId, int itemId)
         {

@@ -52,7 +52,12 @@
                 <tr>
                     <td><a href="/WhereItApp/EditStash?StashId=@stash.StashId">@stash.StashName</a>   </td>
                     <td>@stash.ItemCount</td>
-                    <td>@foreach (var tag in stash.Tags) { <a href="/WhereItApp/EditTag?TagId=@tag.TagId" class="badge bg-secondary">@tag.TagName</a> }</td>
+                    <td>@foreach (var tag in stash.Tags) 
+                        {
+                            string tagColor = tag.TagColor == null ? "bg-secondary" : $"bg-{tag.TagColor}";
+                            <a href="/WhereItApp/EditTag?TagId=@tag.TagId" class="badge @tagColor">@tag.TagName</a> 
+                        }
+                    </td>
                 </tr>
             }
         </table>
@@ -64,9 +69,11 @@
                 <th>Items</th>
             </tr>
             @foreach (var tag in Model.Tags)
-            {
+            {   
+                string tagColor = tag.TagColor == null ? "bg-secondary" : $"bg-{tag.TagColor}";
+          
                 <tr>
-                    <td><a href="/WhereItApp/EditTag?TagId=@tag.TagId">@tag.TagName</a> </td>
+                    <td><a href="/WhereItApp/EditTag?TagId=@tag.TagId" class="badge @tagColor">@tag.TagName</a> </td>
                     <td>@tag.ItemCount</td>
                 </tr>
             }
@@ -84,7 +91,12 @@
                 <tr>
                     <td><a href="/WhereItApp/EditItem?ItemId=@item.ItemId">@item.ItemName</a></td>
                     <td>@item.StashName</td>
-                    <td>@foreach (var tag in item.Tags) { <a href="/WhereItApp/EditTag?TagId=@tag.TagId" class="badge bg-secondary">@tag.TagName</a> }</td> 
+                    <td>@foreach (var tag in item.Tags) 
+                        {
+                            string tagColor = tag.TagColor == null ? "bg-secondary" : $"bg-{tag.TagColor}";
+                            <a href="/WhereItApp/EditTag?TagId=@tag.TagId" class="badge @tagColor">@tag.TagName</a> 
+                        }
+                    </td> 
                 </tr>
             }
         </table>
