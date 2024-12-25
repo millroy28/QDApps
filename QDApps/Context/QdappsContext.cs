@@ -9,8 +9,10 @@ namespace QDApps.Context;
 
 public partial class QdappsContext : DbContext
 {
-    public QdappsContext()
+    private string _connectionString = "";
+    public QdappsContext(string connectionString)
     {
+        _connectionString = connectionString;
     }
 
     public QdappsContext(DbContextOptions<QdappsContext> options)
@@ -46,9 +48,12 @@ public partial class QdappsContext : DbContext
     public virtual DbSet<ViewStashes> ViewStashes { get; set; }
     public virtual DbSet<ViewTags> ViewTags { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=QDApps;Trusted_Connection=True;encrypt=false;");
-
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer(_connectionString);
+        }
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AspNetRole>(entity =>
